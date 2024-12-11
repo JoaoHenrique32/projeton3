@@ -1,11 +1,12 @@
 import threading
 import time
 import random
+import matplotlib.pyplot as plt
 
 def worker(task_id, data, operation, results, semaphore, latency=False):
     """Função que representa um nó do cluster."""
     if latency:
-        time.sleep(random.uniform(2, 5))  # Simula latência
+        time.sleep(random.uniform(5, 15))  # Simula latência
 
     if operation == "sum":
         partial_result = sum(data)
@@ -149,6 +150,7 @@ if __name__ == "__main__":
     if operation == "fibonacci_single":
         print("Executando cálculo do termo único de Fibonacci...")
         result, exec_time = execute_sequential_task(operation, data_chunks)
+        print(f"Resultado: O termo F({term}) da série de Fibonacci é {result}")
     else:
         print("Executando tarefa paralela...")
         parallel_result, parallel_time = execute_parallel_task(n_threads, operation, data_chunks, simulate_latency=True)
@@ -160,5 +162,9 @@ if __name__ == "__main__":
         print(f"Resultado paralelo: {parallel_result}, Tempo: {parallel_time:.4f}s")
         print(f"Resultado sequencial: {sequential_result}, Tempo: {sequential_time:.4f}s")
 
-    if operation == "fibonacci_single":
-        print(f"Resultado: O termo F({term}) da série de Fibonacci é {result}")
+        # Gráficos de comparação de tempo
+        plt.bar(["Paralelo", "Sequencial"], [parallel_time, sequential_time], color=["blue", "green"])
+        plt.xlabel("Método")
+        plt.ylabel("Tempo (s)")
+        plt.title("Comparação de Tempos de Execução")
+        plt.show()
